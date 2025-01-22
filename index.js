@@ -12,7 +12,13 @@ dotenv.config();
 
 
 app.use(express.json());
-app.use(cors());
+app.use(		
+	cors({
+		// origin:"https://study-monk-client.vercel.app",
+		// origin:"http://localhost:3000",
+		// credentials:true,
+	})
+)
 const PORT = 8000;
 
 app.use(
@@ -21,18 +27,22 @@ app.use(
 		tempFileDir:"/tmp",
 	})
 )
+mongoose
+    .connect(process.env.MONGODB_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => console.log("MongoDB Connected"))
+    .catch( (error) => {
+        console.log("DB Connection Failed");
+        console.error(error);
+        process.exit(1);
+    } )
 cloudinaryConnect();
 
 
 app.use("/api/auth", authRoute)
 app.use("/api/posts", postRoute)
-mongoose
-    .connect("mongodb://127.0.0.1:27017/instagram", {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(() => console.log("MongoDB Connected"))
-    .catch((err) => console.log(err));
 
 // database.connect();
 
